@@ -17,11 +17,14 @@ Read xlsx to json
 ## Example
 ### Excel
 * sheet:`product`
+
 | id,int64    | user_id,int64 | name,string | no,string | price,float64 |  create_time,time  |
 | ----------- | ------------- | ----------- | --------- | ------------- | ------------------ |
 | 1           | 1             | product01   | 10001     | 100           | 2022/6/9  13:04:05 |
 | 2           | 2             | product02   | 10002     | 100           | 2022/6/9  13:04:05 |
+
 * sheet:`user`
+
 | id,int64    | username,string | password,string | avatar,file | money,float64 | register_time,time | company.name,string | company.address:o,string | products,ref,product,user_id=id |
 | ----------- | --------------- | --------------- | ----------- | ------------- | ------------------ | ------------------- | ------------------------ | ------------------------------- |
 | 1           | user01          | 123             | user01.png  | 100.51        | 2022/6/9  13:04:05 | company             | address                  |                                 |
