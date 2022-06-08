@@ -1,12 +1,20 @@
 package xlsx2json
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
-	"github.com/codingeasygo/util/converter"
 	"github.com/tealeg/xlsx"
 )
+
+func JSON(v interface{}) string {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err.Error()
+	}
+	return string(data)
+}
 
 func TestReader(t *testing.T) {
 	reader, err := OpenReader("example.xlsx")
@@ -30,7 +38,7 @@ func TestReader(t *testing.T) {
 				return
 			}
 		}
-		fmt.Println(converter.JSON(users))
+		fmt.Println(JSON(users))
 	}
 	{ //string ref
 		data, err := reader.Read("user1", 1, 0)
@@ -56,7 +64,7 @@ func TestReader(t *testing.T) {
 				return
 			}
 		}
-		fmt.Println(converter.JSON(data))
+		fmt.Println(JSON(data))
 	}
 	{
 		reader.OnFile = func(field *Field, cell *xlsx.Cell) (interface{}, error) {
@@ -70,7 +78,7 @@ func TestReader(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		fmt.Println(converter.JSON(data))
+		fmt.Println(JSON(data))
 	}
 }
 
