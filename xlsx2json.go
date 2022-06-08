@@ -19,6 +19,7 @@ type Field struct {
 }
 
 const (
+	FieldTypeBool    = "bool"
 	FieldTypeInt64   = "int64"
 	FieldTypeFloat64 = "float64"
 	FieldTypeString  = "string"
@@ -27,7 +28,7 @@ const (
 	FieldTypeRef     = "ref"
 )
 
-var FieldTypeAll = []string{FieldTypeInt64, FieldTypeFloat64, FieldTypeString, FieldTypeFile, FieldTypeTime, FieldTypeRef}
+var FieldTypeAll = []string{FieldTypeBool, FieldTypeInt64, FieldTypeFloat64, FieldTypeString, FieldTypeFile, FieldTypeTime, FieldTypeRef}
 
 type Reader struct {
 	File   *xlsx.File
@@ -128,6 +129,10 @@ func (r *Reader) readCellRef(s *xlsx.Sheet, field *Field, sheetValues map[string
 			continue
 		}
 		switch refFieldValue.(type) {
+		case bool:
+			if cell.Bool() == refFieldValue {
+				allValues = append(allValues, refValue)
+			}
 		case int64:
 			var val int64
 			val, err = cell.Int64()
@@ -178,6 +183,8 @@ func (r *Reader) readRowObject(s *xlsx.Sheet, fields []*Field, refs []*Field, sh
 		}
 		var value interface{}
 		switch field.Type {
+		case FieldTypeBool:
+			value = cell.Bool()
 		case FieldTypeInt64:
 			value, err = cell.Int64()
 		case FieldTypeFloat64:

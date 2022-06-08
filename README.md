@@ -8,6 +8,7 @@ Read xlsx to json
 * embed ojbect by xx.xx
 
 ## Types
+* `bool` to go bool
 * `int64` to go int64
 * `float64` to go float64
 * `string` to go string
