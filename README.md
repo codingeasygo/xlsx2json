@@ -32,7 +32,7 @@ Read xlsx to json
 
 ### Code
 ```.go
-users, err := reader.Read("user0", 1, 0)
+users, err := reader.Read("user", 1, 0)
 if err != nil {
     t.Error(err)
     return
