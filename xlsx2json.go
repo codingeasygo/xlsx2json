@@ -31,9 +31,10 @@ const (
 var FieldTypeAll = []string{FieldTypeBool, FieldTypeInt64, FieldTypeFloat64, FieldTypeString, FieldTypeFile, FieldTypeTime, FieldTypeRef}
 
 type Reader struct {
-	File   *xlsx.File
-	OnTime func(field *Field, cell *xlsx.Cell) (interface{}, error)
-	OnFile func(field *Field, cell *xlsx.Cell) (interface{}, error)
+	File    *xlsx.File
+	OnParse func(field *Field, cell *xlsx.Cell) (interface{}, error)
+	OnTime  func(field *Field, cell *xlsx.Cell) (interface{}, error)
+	OnFile  func(field *Field, cell *xlsx.Cell) (interface{}, error)
 }
 
 func OpenReader(fileName string) (reader *Reader, err error) {
@@ -73,10 +74,10 @@ func (r *Reader) ReadField(sheet string, row int) (fields []*Field, refs []*Fiel
 			err = fmt.Errorf("%v is invalid by key empty on %v,%v,%v", value, sheet, row, col)
 			break
 		}
-		if !strings.Contains("~"+strings.Join(FieldTypeAll, "~")+"~", "~"+field.Type+"~") {
-			err = fmt.Errorf("%v is invalid by type not supported on %v,%v,%v", value, sheet, row, col)
-			break
-		}
+		// if !strings.Contains("~"+strings.Join(FieldTypeAll, "~")+"~", "~"+field.Type+"~") {
+		// 	err = fmt.Errorf("%v is invalid by type not supported on %v,%v,%v", value, sheet, row, col)
+		// 	break
+		// }
 		if field.Type == FieldTypeRef && len(field.Args) < 2 {
 			err = fmt.Errorf("%v is invalid on %v,%v,%v", value, sheet, row, col)
 			break
@@ -206,6 +207,12 @@ func (r *Reader) readRowObject(s *xlsx.Sheet, fields []*Field, refs []*Field, sh
 				value, err = r.OnFile(field, cell)
 			} else {
 				value = strings.TrimSpace(cell.String())
+			}
+		default:
+			if r.OnParse != nil {
+				value, err = r.OnParse(field, cell)
+			} else {
+				err = fmt.Errorf("field type %v is not supported", field.Type)
 			}
 		}
 		if err == nil {

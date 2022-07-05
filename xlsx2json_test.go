@@ -80,6 +80,22 @@ func TestReader(t *testing.T) {
 		}
 		fmt.Println(JSON(data))
 	}
+	{
+		_, err = reader.Read("user2", 1, 0)
+		if err == nil {
+			t.Error(err)
+			return
+		}
+		reader.OnParse = func(field *Field, cell *xlsx.Cell) (interface{}, error) {
+			return cell.String(), nil
+		}
+		data, err := reader.Read("user2", 1, 0)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		fmt.Println(JSON(data))
+	}
 }
 
 func TestError(t *testing.T) {
@@ -98,12 +114,6 @@ func TestError(t *testing.T) {
 		}
 		//
 		_, _, err = reader.ReadField("field0", 1)
-		if err == nil {
-			t.Error(err)
-			return
-		}
-		//
-		_, _, err = reader.ReadField("field1", 1)
 		if err == nil {
 			t.Error(err)
 			return
