@@ -166,7 +166,7 @@ func (r *Reader) readCellRef(s *xlsx.Sheet, field *Field, sheetValues map[string
 
 func (r *Reader) readRowObject(s *xlsx.Sheet, fields []*Field, refs []*Field, sheetValues map[string][]map[string]interface{}, row int) (object map[string]interface{}, err error) {
 	object = map[string]interface{}{}
-	for _, field := range fields {
+	for i, field := range fields {
 		cell := s.Cell(row, field.Col)
 		if field.Type == FieldTypeRef {
 			object[field.Key], err = r.readCellRef(s, field, sheetValues, object, cell)
@@ -219,6 +219,7 @@ func (r *Reader) readRowObject(s *xlsx.Sheet, fields []*Field, refs []*Field, sh
 			err = r.objectSet(object, field, value)
 		}
 		if err != nil {
+			err = fmt.Errorf("%v on row %v,%v", err, row, i)
 			break
 		}
 	}
